@@ -6,7 +6,6 @@ import withCurrentUserPersonalDetails, {withCurrentUserPersonalDetailsPropTypes,
 import ScreenWrapper from '../../../components/ScreenWrapper';
 import HeaderWithCloseButton from '../../../components/HeaderWithCloseButton';
 import withLocalize, {withLocalizePropTypes} from '../../../components/withLocalize';
-import * as Localize from '../../../libs/Localize';
 import ROUTES from '../../../ROUTES';
 import Form from '../../../components/Form';
 import ONYXKEYS from '../../../ONYXKEYS';
@@ -61,35 +60,24 @@ class DisplayNamePage extends Component {
         _.forEach([values.firstName, values.lastName], (name, index) => {
             const key = index === 0 ? 'firstName' : 'lastName';
 
-            // Check for invalid characters
-            const invalidCharacter = ValidationUtils.findInvalidSymbols(name);
-            if (!_.isEmpty(invalidCharacter)) {
-                errors[key] = Localize.translateLocal('personalDetails.error.hasInvalidCharacter', {invalidCharacter});
+            if (!ValidationUtils.isValidName(name)) {
+                errors[key] = this.props.translate(`personalDetails.error.${key}Invalid`);
                 return;
             }
 
-            // Check for reserved words in first name
-            if (key === 'firstName') {
-                const reservedWords = ValidationUtils.findFirstNameReservedWords(name);
-                if (!_.isEmpty(reservedWords)) {
-                    errors[key] = _.map(reservedWords, reservedName => (
-                        this.props.translate(`personalDetails.error.${key}Reserved`, {reservedName})))
-                        .join('\n');
-                    return;
-                }
+            // Check for invalid characters
+            const invalidCharacter = ValidationUtils.findInvalidSymbols(name);
+            if (!_.isEmpty(invalidCharacter)) {
+                errors[key] = this.props.translate('personalDetails.error.hasInvalidCharacter', {invalidCharacter});
+                return;
             }
 
-            // Check the character limit and zero value
-            const error = ValidationUtils.checkName(name, {
-                maxLength: CONST.FORM_CHARACTER_LIMIT,
-                noZero: true,
-            });
-            if (error === 'zero') {
-                errors[key] = this.props.translate(`personalDetails.error.${key}Invalid`);
-            } else if (error === 'limit') {
-                errors[key] = Localize.translateLocal('personalDetails.error.characterLimit', {
-                    limit: CONST.FORM_CHARACTER_LIMIT,
-                });
+            // Check for reserved names
+            const reservedWords = ValidationUtils.findDisplayNameReservedWords(name);
+            if (!_.isEmpty(reservedWords)) {
+                errors[key] = _.map(reservedWords, reservedName => (
+                    this.props.translate(`personalDetails.error.${key}Reserved`, {reservedName})))
+                    .join('\n');
             }
         });
 
@@ -125,8 +113,7 @@ class DisplayNamePage extends Component {
                             label={this.props.translate('common.firstName')}
                             defaultValue={lodashGet(currentUserDetails, 'firstName', '')}
                             placeholder={this.props.translate('displayNamePage.john')}
-
-                            // maxLength={CONST.FORM_CHARACTER_LIMIT}
+                            maxLength={CONST.FORM_CHARACTER_LIMIT}
                         />
                     </View>
                     <View>
@@ -136,8 +123,7 @@ class DisplayNamePage extends Component {
                             label={this.props.translate('common.lastName')}
                             defaultValue={lodashGet(currentUserDetails, 'lastName', '')}
                             placeholder={this.props.translate('displayNamePage.doe')}
-
-                            // maxLength={CONST.FORM_CHARACTER_LIMIT}
+                            maxLength={CONST.FORM_CHARACTER_LIMIT}
                         />
                     </View>
                 </Form>

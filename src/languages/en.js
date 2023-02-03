@@ -571,6 +571,7 @@ export default {
             firstNameInvalid: 'Invalid first name',
             lastNameInvalid: 'Invalid last name',
             firstNameReserved: ({reservedName}) => `${reservedName} is not allowed in your first name`,
+            lastNameReserved: ({reservedName}) => `${reservedName} is not allowed in your last name`,
             characterLimit: ({limit}) => `Exceeds the max length of ${limit} characters`,
             hasInvalidCharacter: ({invalidCharacter}) => `Please remove the ${invalidCharacter} from the name field.`,
             comma: 'comma',

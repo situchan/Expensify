@@ -65,17 +65,10 @@ class WorkspaceSettingsPage extends React.Component {
         const errors = {};
         const name = values.name.trim();
 
-        const nameError = ValidationUtils.checkName(name, {
-            maxLength: CONST.REPORT.MAX_WORKSPACE_NAME_LENGTH,
-            noZero: true,
-            required: true,
-        });
-        if (nameError === 'empty') {
+        if (!ValidationUtils.isRequiredFulfilled(name)) {
             errors.name = this.props.translate('workspace.editor.nameIsRequiredError');
-        } else if (nameError === 'zero') {
+        } else if (!ValidationUtils.isValidName(name)) {
             errors.name = this.props.translate('workspace.editor.nameIsInvalidError');
-        } else if (nameError === 'limit') {
-            errors.name = this.props.translate('workspace.editor.characterLimit', {limit: CONST.REPORT.MAX_WORKSPACE_NAME_LENGTH});
 
         // Searches for anything that looks like an html tag "< >""
         } else if (name.search(/<(.|\n)*?>/g) !== -1) {
@@ -135,8 +128,7 @@ class WorkspaceSettingsPage extends React.Component {
                                 label={this.props.translate('workspace.editor.nameInputLabel')}
                                 containerStyles={[styles.mt4]}
                                 defaultValue={this.props.policy.name}
-
-                                // maxLength={CONST.REPORT.MAX_WORKSPACE_NAME_LENGTH}
+                                maxLength={CONST.REPORT.MAX_WORKSPACE_NAME_LENGTH}
                             />
                             <View style={[styles.mt4]}>
                                 <Picker

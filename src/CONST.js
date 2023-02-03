@@ -349,7 +349,7 @@ const CONST = {
             PRIVATE: 'private',
         },
         RESERVED_ROOM_NAMES: ['#admins', '#announce'],
-        RESERVED_DISPLAY_NAMES: ['Concierge', 'Expensify'],
+        RESERVED_DISPLAY_NAMES: ['Expensify', 'Concierge'],
         MAX_PREVIEW_AVATARS: 4,
         MAX_ROOM_NAME_LENGTH: 79,
         MAX_WORKSPACE_NAME_LENGTH: 80,

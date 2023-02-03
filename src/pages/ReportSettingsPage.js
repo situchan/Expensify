@@ -103,6 +103,9 @@ class ReportSettingsPage extends Component {
         } else if (!ValidationUtils.isValidRoomName(values.newRoomName)) {
             // Fourth priority: We error if the room name has invalid characters
             errors.newRoomName = this.props.translate('newRoomPage.roomNameInvalidError');
+        } else if (!ValidationUtils.isValidName(values.roomName)) {
+            // Fifth priority: We error if the room name is "0"
+            errors.roomName = this.props.translate('newRoomPage.roomNameInvalidError');
         }
 
         return errors;
