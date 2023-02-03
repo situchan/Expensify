@@ -568,6 +568,9 @@ export default {
         error: {
             firstNameLength: 'First name shouldn\'t be longer than 50 characters',
             lastNameLength: 'Last name shouldn\'t be longer than 50 characters',
+            firstNameInvalid: 'Invalid first name',
+            lastNameInvalid: 'Invalid last name',
+            firstNameReserved: ({reservedName}) => `${reservedName} is not allowed in your first name`,
             characterLimit: ({limit}) => `Exceeds the max length of ${limit} characters`,
             hasInvalidCharacter: ({invalidCharacter}) => `Please remove the ${invalidCharacter} from the name field.`,
             comma: 'comma',
@@ -964,6 +967,8 @@ export default {
             nameInputLabel: 'Name',
             nameInputHelpText: 'This is the name you will see on your workspace.',
             nameIsRequiredError: 'You need to define a name for your workspace.',
+            nameIsInvalidError: 'Invalid workspace name.',
+            characterLimit: ({limit}) => `Exceeds the max length of ${limit} characters`,
             nameHasHtml: 'HTML tags are not allowed in workspace names.',
             currencyInputLabel: 'Default currency',
             currencyInputHelpText: 'All expenses on this workspace will be converted to this currency.',

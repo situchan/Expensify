@@ -359,20 +359,48 @@ function doesFailCharacterLimitAfterTrim(maxLength, valuesToBeValidated) {
 /**
  * Checks if input value includes comma or semicolon which are not accepted
  *
- * @param {String[]} valuesToBeValidated
- * @returns {String[]}
+ * @param {String} value
+ * @returns {String}
  */
-function findInvalidSymbols(valuesToBeValidated) {
-    return _.map(valuesToBeValidated, (value) => {
-        if (!value) {
-            return '';
-        }
-        let inValidSymbol = value.replace(/[,]+/g, '') !== value ? Localize.translateLocal('personalDetails.error.comma') : '';
-        if (_.isEmpty(inValidSymbol)) {
-            inValidSymbol = value.replace(/[;]+/g, '') !== value ? Localize.translateLocal('personalDetails.error.semicolon') : '';
-        }
-        return inValidSymbol;
-    });
+function findInvalidSymbols(value) {
+    if (!value) {
+        return '';
+    }
+    let inValidSymbol = value.replace(/[,]+/g, '') !== value ? Localize.translateLocal('personalDetails.error.comma') : '';
+    if (_.isEmpty(inValidSymbol)) {
+        inValidSymbol = value.replace(/[;]+/g, '') !== value ? Localize.translateLocal('personalDetails.error.semicolon') : '';
+    }
+    return inValidSymbol;
+}
+
+/**
+ * Checks if input value includes reserved names which are not accepted
+ *
+ * @param {String} value
+ * @returns {String}
+ */
+function findFirstNameReservedWords(value) {
+    if (!value) {
+        return '';
+    }
+    return _.filter(CONST.REPORT.RESERVED_DISPLAY_NAMES, name => value.toLowerCase().includes(name.toLowerCase()));
+}
+
+function checkName(name, {maxLength, noZero, required} = {}) {
+    if (typeof name !== 'string') {
+        return name === undefined || name === null ? 'empty' : 'invalid';
+    }
+    const trimmedName = name.trim();
+    if (required && _.isEmpty(trimmedName)) {
+        return 'empty';
+    }
+    if (noZero && trimmedName === '0') {
+        return 'zero';
+    }
+    if (trimmedName.length > maxLength) {
+        return 'limit';
+    }
+    return null;
 }
 
 /**
@@ -456,4 +484,6 @@ export {
     isValidTaxID,
     isValidValidateCode,
     findInvalidSymbols,
+    findFirstNameReservedWords,
+    checkName,
 };

@@ -21,6 +21,7 @@ import withPolicy, {policyPropTypes, policyDefaultProps} from './withPolicy';
 import {withNetwork} from '../../components/OnyxProvider';
 import OfflineWithFeedback from '../../components/OfflineWithFeedback';
 import Form from '../../components/Form';
+import * as ValidationUtils from '../../libs/ValidationUtils';
 
 const propTypes = {
     ...policyPropTypes,
@@ -64,13 +65,21 @@ class WorkspaceSettingsPage extends React.Component {
         const errors = {};
         const name = values.name.trim();
 
-        // Searches for anything that looks like an html tag "< >""
-        if (name.search(/<(.|\n)*?>/g) !== -1) {
-            errors.name = this.props.translate('workspace.editor.nameHasHtml');
-        }
-
-        if (!name || !name.length) {
+        const nameError = ValidationUtils.checkName(name, {
+            maxLength: CONST.REPORT.MAX_WORKSPACE_NAME_LENGTH,
+            noZero: true,
+            required: true,
+        });
+        if (nameError === 'empty') {
             errors.name = this.props.translate('workspace.editor.nameIsRequiredError');
+        } else if (nameError === 'zero') {
+            errors.name = this.props.translate('workspace.editor.nameIsInvalidError');
+        } else if (nameError === 'limit') {
+            errors.name = this.props.translate('workspace.editor.characterLimit', {limit: CONST.REPORT.MAX_WORKSPACE_NAME_LENGTH});
+
+        // Searches for anything that looks like an html tag "< >""
+        } else if (name.search(/<(.|\n)*?>/g) !== -1) {
+            errors.name = this.props.translate('workspace.editor.nameHasHtml');
         }
 
         return errors;
@@ -126,6 +135,8 @@ class WorkspaceSettingsPage extends React.Component {
                                 label={this.props.translate('workspace.editor.nameInputLabel')}
                                 containerStyles={[styles.mt4]}
                                 defaultValue={this.props.policy.name}
+
+                                // maxLength={CONST.REPORT.MAX_WORKSPACE_NAME_LENGTH}
                             />
                             <View style={[styles.mt4]}>
                                 <Picker
