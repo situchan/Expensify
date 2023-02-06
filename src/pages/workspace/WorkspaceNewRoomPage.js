@@ -94,9 +94,9 @@ class WorkspaceNewRoomPage extends React.Component {
         } else if (!ValidationUtils.isValidRoomName(values.roomName)) {
             // Fourth priority: We error if the room name has invalid characters
             errors.roomName = this.props.translate('newRoomPage.roomNameInvalidError');
-        } else if (!ValidationUtils.isValidName(values.roomName)) {
+        } else if (!ValidationUtils.isValidName(values.roomName, true)) {
             // Fifth priority: We error if the room name is "0"
-            errors.roomName = this.props.translate('newRoomPage.roomNameInvalidError');
+            errors.roomName = this.props.translate('newRoomPage.nameIsInvalidError');
         }
 
         if (!values.policyID) {

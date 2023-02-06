@@ -60,9 +60,12 @@ class ACHContractStep extends React.Component {
             _.each(this.state.beneficialOwners, (ownerKey) => {
                 // eslint-disable-next-line rulesdir/prefer-early-return
                 _.each(requiredFields, (inputKey) => {
-                    if (!ValidationUtils.isRequiredFulfilled(values[`beneficialOwner_${ownerKey}_${inputKey}`])) {
+                    const key = `beneficialOwner_${ownerKey}_${inputKey}`;
+                    if (!ValidationUtils.isRequiredFulfilled(values[key])) {
                         const errorKey = errorKeys[inputKey] || inputKey;
-                        errors[`beneficialOwner_${ownerKey}_${inputKey}`] = this.props.translate(`bankAccount.error.${errorKey}`);
+                        errors[key] = this.props.translate(`bankAccount.error.${errorKey}`);
+                    } else if (['firstName', 'lastName'].includes(inputKey) && !ValidationUtils.isValidName()) {
+                        errors[key] = this.props.translate(`personalDetails.error.${inputKey}Invalid`);
                     }
                 });
 

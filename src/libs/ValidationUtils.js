@@ -386,8 +386,17 @@ function findDisplayNameReservedWords(value) {
     return _.filter(CONST.REPORT.RESERVED_DISPLAY_NAMES, name => value.toLowerCase().includes(name.toLowerCase()));
 }
 
-function isValidName(name) {
-    return _.isString(name) && name.trim() !== '0';
+function isValidName(name, hasRoomPrefix) {
+    if (!_.isString(name)) {
+        return false;
+    }
+    const trimmedName = name.trim();
+    if (hasRoomPrefix && trimmedName.startsWith(CONST.POLICY.ROOM_PREFIX)) {
+        if (trimmedName === `${CONST.POLICY.ROOM_PREFIX}0`) {
+            return false;
+        }
+    }
+    return trimmedName !== '0';
 }
 
 /**

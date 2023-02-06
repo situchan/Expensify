@@ -213,10 +213,14 @@ class RequestCallPage extends Component {
 
         if (_.isEmpty(values.firstName.trim())) {
             errors.firstName = this.props.translate('requestCallPage.error.firstName');
+        } else if (!ValidationUtils.isValidName(values.firstName)) {
+            errors.firstName = this.props.translate('personalDetails.error.firstNameInvalid');
         }
 
         if (_.isEmpty(values.lastName.trim())) {
             errors.lastName = this.props.translate('requestCallPage.error.lastName');
+        } else if (!ValidationUtils.isValidName(values.lastName)) {
+            errors.lastName = this.props.translate('personalDetails.error.lastNameInvalid');
         }
 
         const [firstNameLengthError, lastNameLengthError] = ValidationUtils.doesFailCharacterLimit(50, [values.firstName, values.lastName]);

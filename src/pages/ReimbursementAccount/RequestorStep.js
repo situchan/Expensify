@@ -44,10 +44,14 @@ class RequestorStep extends React.Component {
 
         if (!ValidationUtils.isRequiredFulfilled(values.firstName)) {
             errors.firstName = this.props.translate('bankAccount.error.firstName');
+        } else if (!ValidationUtils.isValidName(values.firstName)) {
+            errors.firstName = this.props.translate('personalDetails.error.firstNameInvalid');
         }
 
         if (!ValidationUtils.isRequiredFulfilled(values.lastName)) {
             errors.lastName = this.props.translate('bankAccount.error.lastName');
+        } else if (!ValidationUtils.isValidName(values.lastName)) {
+            errors.lastName = this.props.translate('personalDetails.error.lastNameInvalid');
         }
 
         if (!ValidationUtils.isRequiredFulfilled(values.dob)) {
