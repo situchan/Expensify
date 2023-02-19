@@ -36,11 +36,13 @@ class BaseModal extends PureComponent {
         }
 
         Modal.willAlertModalBecomeVisible(this.props.isVisible);
+        Modal.setModalClose(this.props.isVisible ? this.props.onClose : null);
     }
 
     componentWillUnmount() {
         // we don't want to call the onModalHide on unmount
         this.hideModal(this.props.isVisible);
+        Modal.setModalClose(this.props.onClose);
     }
 
     /**

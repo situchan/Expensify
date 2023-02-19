@@ -1,6 +1,17 @@
 import Onyx from 'react-native-onyx';
 import ONYXKEYS from '../../ONYXKEYS';
 
+let closeModal;
+
+function setModalClose(onClose) {
+    closeModal = onClose;
+}
+
+function close() {
+    if (!closeModal) { return; }
+    closeModal();
+}
+
 /**
  * Allows other parts of the app to know when a modal has been opened or closed
  *
@@ -21,6 +32,8 @@ function willAlertModalBecomeVisible(isVisible) {
 }
 
 export {
+    setModalClose,
+    close,
     setModalVisibility,
     willAlertModalBecomeVisible,
 };
