@@ -66,7 +66,6 @@ function resetHomeRouteParams() {
         });
 
         Navigation.setParams(emptyParams, lodashGet(homeRoute, 'key', ''));
-        Onyx.set(ONYXKEYS.IS_CHECKING_PUBLIC_ROOM, false);
     });
 }
 

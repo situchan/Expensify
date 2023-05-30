@@ -17,7 +17,6 @@ import * as OptionsListUtils from '../libs/OptionsListUtils';
 import * as ReportUtils from '../libs/ReportUtils';
 import * as PolicyUtils from '../libs/PolicyUtils';
 import * as Report from '../libs/actions/Report';
-import * as Session from '../libs/actions/Session';
 import participantPropTypes from '../components/participantPropTypes';
 import * as Expensicons from '../components/Icon/Expensicons';
 import ROUTES from '../ROUTES';
@@ -182,7 +181,7 @@ class ReportDetailsPage extends Component {
                                     title={this.props.translate(item.translationKey)}
                                     subtitle={item.subtitle}
                                     icon={item.icon}
-                                    onPress={Session.checkIfActionIsAllowed(item.action)}
+                                    onPress={item.action}
                                     shouldShowRightIcon
                                     brickRoadIndicator={brickRoadIndicator}
                                 />

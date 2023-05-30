@@ -5,7 +5,6 @@ import {withOnyx} from 'react-native-onyx';
 import {View, Keyboard} from 'react-native';
 import CONST from '../../../CONST';
 import ReportActionCompose from './ReportActionCompose';
-import AnonymousReportFooter from '../../../components/AnonymousReportFooter';
 import SwipeableView from '../../../components/SwipeableView';
 import OfflineIndicator from '../../../components/OfflineIndicator';
 import ArchivedReportFooter from '../../../components/ArchivedReportFooter';
@@ -16,7 +15,6 @@ import styles from '../../../styles/styles';
 import reportActionPropTypes from './reportActionPropTypes';
 import reportPropTypes from '../../reportPropTypes';
 import * as ReportUtils from '../../../libs/ReportUtils';
-import * as Session from '../../../libs/actions/Session';
 
 const propTypes = {
     /** Report object for the current report */
@@ -83,19 +81,15 @@ class ReportFooter extends React.Component {
                 {!hideComposer && (this.props.shouldShowComposeInput || !this.props.isSmallScreenWidth) && (
                     <View style={[this.getChatFooterStyles(), this.props.isComposerFullSize && styles.chatFooterFullCompose]}>
                         <SwipeableView onSwipeDown={Keyboard.dismiss}>
-                            {Session.isAnonymousUser() ? (
-                                <AnonymousReportFooter report={this.props.report} />
-                            ) : (
-                                <ReportActionCompose
-                                    onSubmit={this.props.onSubmitComment}
-                                    reportID={this.props.report.reportID.toString()}
-                                    reportActions={this.props.reportActions}
-                                    report={this.props.report}
-                                    pendingAction={this.props.pendingAction}
-                                    isComposerFullSize={this.props.isComposerFullSize}
-                                    disabled={this.props.shouldDisableCompose}
-                                />
-                            )}
+                            <ReportActionCompose
+                                onSubmit={this.props.onSubmitComment}
+                                reportID={this.props.report.reportID.toString()}
+                                reportActions={this.props.reportActions}
+                                report={this.props.report}
+                                pendingAction={this.props.pendingAction}
+                                isComposerFullSize={this.props.isComposerFullSize}
+                                disabled={this.props.shouldDisableCompose}
+                            />
                         </SwipeableView>
                     </View>
                 )}

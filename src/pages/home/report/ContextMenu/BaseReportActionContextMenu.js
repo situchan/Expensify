@@ -1,5 +1,5 @@
 import React from 'react';
-import {InteractionManager, View} from 'react-native';
+import {View} from 'react-native';
 import _ from 'underscore';
 import PropTypes from 'prop-types';
 import getReportActionContextMenuStyles from '../../../../styles/getReportActionContextMenuStyles';
@@ -10,8 +10,6 @@ import ContextMenuActions, {CONTEXT_MENU_TYPES} from './ContextMenuActions';
 import compose from '../../../../libs/compose';
 import withWindowDimensions, {windowDimensionsPropTypes} from '../../../../components/withWindowDimensions';
 import {withBetas} from '../../../../components/OnyxProvider';
-import * as Session from '../../../../libs/actions/Session';
-import {hideContextMenu} from './ReportActionContextMenu';
 
 const propTypes = {
     /** String representing the context menu type [LINK, REPORT_ACTION] which controls context menu choices  */
@@ -63,24 +61,6 @@ class BaseReportActionContextMenu extends React.Component {
                 this.props.reportID,
             );
 
-        /**
-         * Checks if user is anonymous. If true, hides the context menu and
-         * shows the sign in modal. Else, executes the callback.
-         *
-         * @param {Function} callback
-         */
-        const interceptAnonymousUser = (callback) => {
-            if (Session.isAnonymousUser()) {
-                hideContextMenu(false);
-
-                InteractionManager.runAfterInteractions(() => {
-                    Session.signOutAndRedirectToSignIn();
-                });
-            } else {
-                callback();
-            }
-        };
-
         return (
             (this.props.isVisible || this.state.shouldKeepOpen) && (
                 <View
@@ -96,7 +76,6 @@ class BaseReportActionContextMenu extends React.Component {
                             selection: this.props.selection,
                             close: () => this.setState({shouldKeepOpen: false}),
                             openContextMenu: () => this.setState({shouldKeepOpen: true}),
-                            interceptAnonymousUser,
                         };
 
                         if (contextAction.renderContent) {
@@ -116,7 +95,7 @@ class BaseReportActionContextMenu extends React.Component {
                                 successText={contextAction.successTextTranslateKey ? this.props.translate(contextAction.successTextTranslateKey) : undefined}
                                 isMini={this.props.isMini}
                                 key={contextAction.textTranslateKey}
-                                onPress={() => interceptAnonymousUser(() => contextAction.onPress(closePopup, payload))}
+                                onPress={() => contextAction.onPress(closePopup, payload)}
                                 description={contextAction.getDescription(this.props.selection, this.props.isSmallScreenWidth)}
                                 autoReset={contextAction.autoReset}
                             />

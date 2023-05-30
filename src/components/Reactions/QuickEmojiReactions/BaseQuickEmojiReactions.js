@@ -10,7 +10,6 @@ import styles from '../../../styles/styles';
 import ONYXKEYS from '../../../ONYXKEYS';
 import Tooltip from '../../Tooltip';
 import * as EmojiUtils from '../../../libs/EmojiUtils';
-import * as Session from '../../../libs/actions/Session';
 
 const baseQuickEmojiReactionsPropTypes = {
     /**
@@ -57,7 +56,9 @@ const BaseQuickEmojiReactions = (props) => (
                     <EmojiReactionBubble
                         emojiCodes={[EmojiUtils.getPreferredEmojiCode(emoji, props.preferredSkinTone)]}
                         isContextMenu
-                        onPress={Session.checkIfActionIsAllowed(() => props.onEmojiSelected(emoji))}
+                        onPress={() => {
+                            props.onEmojiSelected(emoji);
+                        }}
                     />
                 </View>
             </Tooltip>
