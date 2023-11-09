@@ -63,12 +63,6 @@ const propTypes = {
     /** Whether the comment is a thread parent message/the first message in a thread */
     isThreadParentMessage: PropTypes.bool,
 
-    /** Whether the report action type is 'APPROVED' or 'SUBMITTED'. Used to style system messages from Old Dot */
-    isApprovedOrSubmittedReportAction: PropTypes.bool,
-
-    /** Used to format RTL display names in Old Dot system messages e.g. Arabic */
-    isFragmentContainingDisplayName: PropTypes.bool,
-
     ...windowDimensionsPropTypes,
 
     /** localization props */
@@ -92,8 +86,6 @@ const defaultProps = {
     delegateAccountID: 0,
     actorIcon: {},
     isThreadParentMessage: false,
-    isApprovedOrSubmittedReportAction: false,
-    isFragmentContainingDisplayName: false,
     displayAsGroup: false,
 };
 
@@ -164,15 +156,8 @@ function ReportActionItemFragment(props) {
                 </Text>
             );
         }
-        case 'TEXT': {
-            return props.isApprovedOrSubmittedReportAction ? (
-                <Text
-                    numberOfLines={props.isSingleLine ? 1 : undefined}
-                    style={[styles.chatItemMessage, styles.colorMuted]}
-                >
-                    {props.isFragmentContainingDisplayName ? convertToLTR(props.fragment.text) : props.fragment.text}
-                </Text>
-            ) : (
+        case 'TEXT':
+            return (
                 <UserDetailsTooltip
                     accountID={props.accountID}
                     delegateAccountID={props.delegateAccountID}
@@ -186,7 +171,6 @@ function ReportActionItemFragment(props) {
                     </Text>
                 </UserDetailsTooltip>
             );
-        }
         case 'LINK':
             return <Text>LINK</Text>;
         case 'INTEGRATION_COMMENT':
