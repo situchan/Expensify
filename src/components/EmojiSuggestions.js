@@ -1,6 +1,7 @@
-import React, {ReactElement} from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import {View} from 'react-native';
-import type {SimpleEmoji} from '@libs/EmojiTrie';
+import _ from 'underscore';
 import * as EmojiUtils from '@libs/EmojiUtils';
 import getStyledTextArray from '@libs/GetStyledTextArray';
 import styles from '@styles/styles';
@@ -8,57 +9,77 @@ import * as StyleUtils from '@styles/StyleUtils';
 import AutoCompleteSuggestions from './AutoCompleteSuggestions';
 import Text from './Text';
 
-type MeasureParentContainerCallback = (x: number, y: number, width: number) => void;
-
-type EmojiSuggestionsProps = {
+const propTypes = {
     /** The index of the highlighted emoji */
-    highlightedEmojiIndex?: number;
+    highlightedEmojiIndex: PropTypes.number,
 
     /** Array of suggested emoji */
-    emojis: SimpleEmoji[];
+    emojis: PropTypes.arrayOf(
+        PropTypes.shape({
+            /** The emoji code */
+            code: PropTypes.string.isRequired,
+
+            /** The name of the emoji */
+            name: PropTypes.string.isRequired,
+
+            /** Array of different skin tone variants.
+             * If provided, it will be indexed with props.preferredSkinToneIndex */
+            types: PropTypes.arrayOf(PropTypes.string.isRequired),
+        }),
+    ).isRequired,
 
     /** Fired when the user selects an emoji */
-    onSelect: (index: number) => void;
+    onSelect: PropTypes.func.isRequired,
 
     /** Emoji prefix that follows the colon */
-    prefix: string;
+    prefix: PropTypes.string.isRequired,
 
     /** Show that we can use large emoji picker. Depending on available space
      * and whether the input is expanded, we can have a small or large emoji
      * suggester. When this value is false, the suggester will have a height of
      * 2.5 items. When this value is true, the height can be up to 5 items.  */
-    isEmojiPickerLarge: boolean;
+    isEmojiPickerLarge: PropTypes.bool.isRequired,
 
     /** Stores user's preferred skin tone */
-    preferredSkinToneIndex: number;
+    preferredSkinToneIndex: PropTypes.number.isRequired,
 
     /** Meaures the parent container's position and dimensions. */
-    measureParentContainer: (callback: MeasureParentContainerCallback) => void;
+    measureParentContainer: PropTypes.func,
+};
+
+const defaultProps = {
+    highlightedEmojiIndex: 0,
+    measureParentContainer: () => {},
 };
 
 /**
  * Create unique keys for each emoji item
+ * @param {Object} item
+ * @param {Number} index
+ * @returns {String}
  */
-const keyExtractor = (item: SimpleEmoji, index: number): string => `${item.name}+${index}}`;
+const keyExtractor = (item, index) => `${item.name}+${index}}`;
 
-function EmojiSuggestions({emojis, onSelect, prefix, isEmojiPickerLarge, preferredSkinToneIndex, highlightedEmojiIndex = 0, measureParentContainer = () => {}}: EmojiSuggestionsProps) {
+function EmojiSuggestions(props) {
     /**
      * Render an emoji suggestion menu item component.
+     * @param {Object} item
+     * @returns {JSX.Element}
      */
-    const renderSuggestionMenuItem = (item: SimpleEmoji): ReactElement => {
-        const styledTextArray = getStyledTextArray(item.name, prefix);
+    const renderSuggestionMenuItem = (item) => {
+        const styledTextArray = getStyledTextArray(item.name, props.prefix);
 
         return (
             <View style={styles.autoCompleteSuggestionContainer}>
-                <Text style={styles.emojiSuggestionsEmoji}>{EmojiUtils.getEmojiCodeWithSkinColor(item, preferredSkinToneIndex)}</Text>
+                <Text style={styles.emojiSuggestionsEmoji}>{EmojiUtils.getEmojiCodeWithSkinColor(item, props.preferredSkinToneIndex)}</Text>
                 <Text
                     numberOfLines={2}
                     style={styles.emojiSuggestionsText}
                 >
                     :
-                    {styledTextArray.map(({text, isColored}) => (
+                    {_.map(styledTextArray, ({text, isColored}, i) => (
                         <Text
-                            key={`${text}+${isColored}`}
+                            key={`${text}+${i}`}
                             style={StyleUtils.getColoredBackgroundStyle(isColored)}
                         >
                             {text}
@@ -72,18 +93,20 @@ function EmojiSuggestions({emojis, onSelect, prefix, isEmojiPickerLarge, preferr
 
     return (
         <AutoCompleteSuggestions
-            suggestions={emojis}
+            suggestions={props.emojis}
             renderSuggestionMenuItem={renderSuggestionMenuItem}
             keyExtractor={keyExtractor}
-            highlightedSuggestionIndex={highlightedEmojiIndex}
-            onSelect={onSelect}
-            isSuggestionPickerLarge={isEmojiPickerLarge}
+            highlightedSuggestionIndex={props.highlightedEmojiIndex}
+            onSelect={props.onSelect}
+            isSuggestionPickerLarge={props.isEmojiPickerLarge}
             accessibilityLabelExtractor={keyExtractor}
-            measureParentContainer={measureParentContainer}
+            measureParentContainer={props.measureParentContainer}
         />
     );
 }
 
+EmojiSuggestions.propTypes = propTypes;
+EmojiSuggestions.defaultProps = defaultProps;
 EmojiSuggestions.displayName = 'EmojiSuggestions';
 
 export default EmojiSuggestions;
