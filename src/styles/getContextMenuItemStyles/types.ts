@@ -1,6 +1,5 @@
 import {ViewStyle} from 'react-native';
-import styles from '@styles/styles';
 
-type GetContextMenuItemStyle = (themeStyles: typeof styles, windowWidth?: number) => ViewStyle[];
+type GetContextMenuItemStyle = (windowWidth?: number) => ViewStyle[];
 
 export default GetContextMenuItemStyle;

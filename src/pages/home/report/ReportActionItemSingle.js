@@ -19,10 +19,9 @@ import Navigation from '@libs/Navigation/Navigation';
 import * as ReportUtils from '@libs/ReportUtils';
 import * as UserUtils from '@libs/UserUtils';
 import reportPropTypes from '@pages/reportPropTypes';
-import stylePropTypes from '@styles/stylePropTypes';
+import styles from '@styles/styles';
 import * as StyleUtils from '@styles/StyleUtils';
 import themeColors from '@styles/themes/default';
-import useThemeStyles from '@styles/useThemeStyles';
 import CONST from '@src/CONST';
 import ROUTES from '@src/ROUTES';
 import ReportActionItemDate from './ReportActionItemDate';
@@ -34,7 +33,8 @@ const propTypes = {
     action: PropTypes.shape(reportActionPropTypes).isRequired,
 
     /** Styles for the outermost View */
-    wrapperStyle: stylePropTypes,
+    // eslint-disable-next-line react/forbid-prop-types
+    wrapperStyles: PropTypes.arrayOf(PropTypes.object),
 
     /** Children view component for this action item */
     children: PropTypes.node.isRequired,
@@ -61,7 +61,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-    wrapperStyle: undefined,
+    wrapperStyles: [styles.chatItem],
     showHeader: true,
     shouldShowSubscriptAvatar: false,
     hasBeenFlagged: false,
@@ -79,7 +79,6 @@ const showWorkspaceDetails = (reportID) => {
 };
 
 function ReportActionItemSingle(props) {
-    const styles = useThemeStyles();
     const personalDetails = usePersonalDetails() || CONST.EMPTY_OBJECT;
     const actorAccountID = props.action.actionName === CONST.REPORT.ACTIONS.TYPE.REPORTPREVIEW && props.iouReport ? props.iouReport.managerID : props.action.actorAccountID;
     let displayName = ReportUtils.getDisplayNameForParticipant(actorAccountID);
@@ -208,7 +207,7 @@ function ReportActionItemSingle(props) {
     const statusTooltipText = formattedDate ? `${statusText} (${formattedDate})` : statusText;
 
     return (
-        <View style={[styles.chatItem, props.wrapperStyle]}>
+        <View style={props.wrapperStyles}>
             <PressableWithoutFeedback
                 style={[styles.alignSelfStart, styles.mr3]}
                 onPressIn={ControlSelection.block}

@@ -7,9 +7,9 @@ import ControlSelection from '@libs/ControlSelection';
 import convertToLTR from '@libs/convertToLTR';
 import * as DeviceCapabilities from '@libs/DeviceCapabilities';
 import getButtonState from '@libs/getButtonState';
+import styles from '@styles/styles';
 import * as StyleUtils from '@styles/StyleUtils';
-import useTheme from '@styles/themes/useTheme';
-import useThemeStyles from '@styles/useThemeStyles';
+import themeColors from '@styles/themes/default';
 import variables from '@styles/variables';
 import * as Session from '@userActions/Session';
 import CONST from '@src/CONST';
@@ -38,11 +38,11 @@ const defaultProps = {
     shouldShowHeaderTitle: false,
     shouldParseTitle: false,
     wrapperStyle: [],
-    style: undefined,
+    style: styles.popoverMenuItem,
     titleStyle: {},
     shouldShowTitleIcon: false,
     titleIcon: () => {},
-    descriptionTextStyle: undefined,
+    descriptionTextStyle: styles.breakWord,
     success: false,
     icon: undefined,
     secondaryIcon: undefined,
@@ -86,13 +86,10 @@ const defaultProps = {
 };
 
 const MenuItem = React.forwardRef((props, ref) => {
-    const theme = useTheme();
-    const styles = useThemeStyles();
-    const style = props.style || styles.popoverMenuItem;
     const {isSmallScreenWidth} = useWindowDimensions();
     const [html, setHtml] = React.useState('');
 
-    const isDeleted = _.contains(style, styles.offlineFeedback.deleted);
+    const isDeleted = _.contains(props.style, styles.offlineFeedback.deleted);
     const descriptionVerticalMargin = props.shouldShowDescriptionOnTop ? styles.mb1 : styles.mt1;
     const titleTextStyle = StyleUtils.combineStyles(
         [
@@ -112,7 +109,7 @@ const MenuItem = React.forwardRef((props, ref) => {
         styles.textLabelSupporting,
         props.icon && !_.isArray(props.icon) ? styles.ml3 : undefined,
         props.title ? descriptionVerticalMargin : StyleUtils.getFontSizeStyle(variables.fontSizeNormal),
-        props.descriptionTextStyle || styles.breakWord,
+        props.descriptionTextStyle,
         isDeleted ? styles.offlineFeedback.deleted : undefined,
     ]);
 
@@ -179,7 +176,7 @@ const MenuItem = React.forwardRef((props, ref) => {
                     onPressOut={ControlSelection.unblock}
                     onSecondaryInteraction={props.onSecondaryInteraction}
                     style={({pressed}) => [
-                        style,
+                        props.style,
                         !props.interactive && styles.cursorDefault,
                         StyleUtils.getButtonBackgroundColorStyle(getButtonState(props.focused || isHovered, pressed, props.success, props.disabled, props.interactive), true),
                         (isHovered || pressed) && props.hoverAndPressStyle,
@@ -209,9 +206,9 @@ const MenuItem = React.forwardRef((props, ref) => {
                                             icons={props.icon}
                                             size={props.avatarSize}
                                             secondAvatarStyle={[
-                                                StyleUtils.getBackgroundAndBorderStyle(theme.sidebar),
-                                                pressed && props.interactive ? StyleUtils.getBackgroundAndBorderStyle(theme.buttonPressedBG) : undefined,
-                                                isHovered && !pressed && props.interactive ? StyleUtils.getBackgroundAndBorderStyle(theme.border) : undefined,
+                                                StyleUtils.getBackgroundAndBorderStyle(themeColors.sidebar),
+                                                pressed && props.interactive ? StyleUtils.getBackgroundAndBorderStyle(themeColors.buttonPressedBG) : undefined,
+                                                isHovered && !pressed && props.interactive ? StyleUtils.getBackgroundAndBorderStyle(themeColors.border) : undefined,
                                             ]}
                                         />
                                     )}
@@ -294,7 +291,7 @@ const MenuItem = React.forwardRef((props, ref) => {
                                                 <View style={[styles.ml2]}>
                                                     <Icon
                                                         src={props.titleIcon}
-                                                        fill={theme.iconSuccessFill}
+                                                        fill={themeColors.iconSuccessFill}
                                                     />
                                                 </View>
                                             )}
@@ -345,7 +342,7 @@ const MenuItem = React.forwardRef((props, ref) => {
                                 {/* Since subtitle can be of type number, we should allow 0 to be shown */}
                                 {(props.subtitle || props.subtitle === 0) && (
                                     <View style={[styles.justifyContentCenter, styles.mr1]}>
-                                        <Text style={[styles.textLabelSupporting, style]}>{props.subtitle}</Text>
+                                        <Text style={[styles.textLabelSupporting, props.style]}>{props.subtitle}</Text>
                                     </View>
                                 )}
                                 {!_.isEmpty(props.floatRightAvatars) && (
@@ -364,7 +361,7 @@ const MenuItem = React.forwardRef((props, ref) => {
                                     <View style={[styles.alignItemsCenter, styles.justifyContentCenter, styles.ml1]}>
                                         <Icon
                                             src={Expensicons.DotIndicator}
-                                            fill={props.brickRoadIndicator === 'error' ? theme.danger : theme.success}
+                                            fill={props.brickRoadIndicator === 'error' ? themeColors.danger : themeColors.success}
                                         />
                                     </View>
                                 )}
