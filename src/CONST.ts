@@ -3162,7 +3162,6 @@ const CONST = {
     },
 
     MINI_CONTEXT_MENU_MAX_ITEMS: 4,
-
     REPORT_FIELD_TITLE_FIELD_ID: 'text_title',
 } as const;
 
