@@ -1,9 +1,14 @@
 import React from 'react';
-import type {CustomRendererProps, TPhrasing, TText} from 'react-native-render-html';
 import Text from '@components/Text';
 import useThemeStyles from '@hooks/useThemeStyles';
 
-function NextStepEmailRenderer({tnode}: CustomRendererProps<TText | TPhrasing>) {
+type NextStepEmailRendererProps = {
+    tnode: {
+        data: string;
+    };
+};
+
+function NextStepEmailRenderer({tnode}: NextStepEmailRendererProps) {
     const styles = useThemeStyles();
 
     return (
@@ -11,7 +16,7 @@ function NextStepEmailRenderer({tnode}: CustomRendererProps<TText | TPhrasing>) 
             nativeID="email-with-break-opportunities"
             style={[styles.breakWord, styles.textLabelSupporting, styles.textStrong]}
         >
-            {'data' in tnode ? tnode.data : ''}
+            {tnode.data}
         </Text>
     );
 }

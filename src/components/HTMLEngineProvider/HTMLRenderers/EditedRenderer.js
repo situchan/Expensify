@@ -1,17 +1,23 @@
 import React from 'react';
-import type {CustomRendererProps, TBlock} from 'react-native-render-html';
+import _ from 'underscore';
 import Text from '@components/Text';
-import useLocalize from '@hooks/useLocalize';
+import withLocalize, {withLocalizePropTypes} from '@components/withLocalize';
 import useTheme from '@hooks/useTheme';
 import useThemeStyles from '@hooks/useThemeStyles';
 import variables from '@styles/variables';
 import CONST from '@src/CONST';
+import htmlRendererPropTypes from './htmlRendererPropTypes';
 
-function EditedRenderer({tnode, TDefaultRenderer, style, ...defaultRendererProps}: CustomRendererProps<TBlock>) {
+const propTypes = {
+    ...htmlRendererPropTypes,
+    ...withLocalizePropTypes,
+};
+
+function EditedRenderer(props) {
     const theme = useTheme();
     const styles = useThemeStyles();
-    const {translate} = useLocalize();
-    const isPendingDelete = Boolean(tnode.attributes.deleted !== undefined);
+    const defaultRendererProps = _.omit(props, ['TDefaultRenderer', 'style', 'tnode']);
+    const isPendingDelete = Boolean(props.tnode.attributes.deleted !== undefined);
     return (
         <Text>
             <Text
@@ -27,12 +33,13 @@ function EditedRenderer({tnode, TDefaultRenderer, style, ...defaultRendererProps
                 color={theme.textSupporting}
                 style={[styles.editedLabelStyles, isPendingDelete && styles.offlineFeedback.deleted]}
             >
-                {translate('reportActionCompose.edited')}
+                {props.translate('reportActionCompose.edited')}
             </Text>
         </Text>
     );
 }
 
+EditedRenderer.propTypes = propTypes;
 EditedRenderer.displayName = 'EditedRenderer';
 
-export default EditedRenderer;
+export default withLocalize(EditedRenderer);

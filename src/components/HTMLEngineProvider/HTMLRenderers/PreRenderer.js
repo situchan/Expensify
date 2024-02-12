@@ -1,47 +1,52 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {View} from 'react-native';
-import type {GestureResponderEvent} from 'react-native';
-import type {CustomRendererProps, TBlock} from 'react-native-render-html';
+import _ from 'underscore';
 import PressableWithoutFeedback from '@components/Pressable/PressableWithoutFeedback';
 import {ShowContextMenuContext, showContextMenuForReport} from '@components/ShowContextMenuContext';
-import useLocalize from '@hooks/useLocalize';
+import withLocalize from '@components/withLocalize';
 import useThemeStyles from '@hooks/useThemeStyles';
 import * as ReportUtils from '@libs/ReportUtils';
 import CONST from '@src/CONST';
+import htmlRendererPropTypes from './htmlRendererPropTypes';
 
-type PreRendererProps = CustomRendererProps<TBlock> & {
+const propTypes = {
     /** Press in handler for the code block */
-    onPressIn?: (event?: GestureResponderEvent | KeyboardEvent) => void;
+    onPressIn: PropTypes.func,
 
     /** Press out handler for the code block */
-    onPressOut?: (event?: GestureResponderEvent | KeyboardEvent) => void;
-
-    /** Long press handler for the code block */
-    onLongPress?: (event?: GestureResponderEvent | KeyboardEvent) => void;
+    onPressOut: PropTypes.func,
 
     /** The position of this React element relative to the parent React element, starting at 0 */
-    renderIndex: number;
+    renderIndex: PropTypes.number.isRequired,
 
     /** The total number of elements children of this React element parent */
-    renderLength: number;
+    renderLength: PropTypes.number.isRequired,
+
+    ...htmlRendererPropTypes,
 };
 
-function PreRenderer({TDefaultRenderer, onPressIn, onPressOut, onLongPress, ...defaultRendererProps}: PreRendererProps) {
+const defaultProps = {
+    onPressIn: undefined,
+    onPressOut: undefined,
+};
+
+function PreRenderer(props) {
     const styles = useThemeStyles();
-    const {translate} = useLocalize();
-    const isLast = defaultRendererProps.renderIndex === defaultRendererProps.renderLength - 1;
+    const TDefaultRenderer = props.TDefaultRenderer;
+    const defaultRendererProps = _.omit(props, ['TDefaultRenderer', 'onPressIn', 'onPressOut', 'onLongPress']);
+    const isLast = props.renderIndex === props.renderLength - 1;
 
     return (
-        <View style={isLast ? styles.mt2 : styles.mv2}>
+        <View style={[isLast ? styles.mt2 : styles.mv2]}>
             <ShowContextMenuContext.Consumer>
                 {({anchor, report, action, checkIfContextMenuActive}) => (
                     <PressableWithoutFeedback
-                        onPress={onPressIn ?? (() => {})}
-                        onPressIn={onPressIn}
-                        onPressOut={onPressOut}
-                        onLongPress={(event) => showContextMenuForReport(event, anchor, report?.reportID ?? '', action, checkIfContextMenuActive, ReportUtils.isArchivedRoom(report))}
+                        onPressIn={props.onPressIn}
+                        onPressOut={props.onPressOut}
+                        onLongPress={(event) => showContextMenuForReport(event, anchor, report.reportID, action, checkIfContextMenuActive, ReportUtils.isArchivedRoom(report))}
                         role={CONST.ROLE.PRESENTATION}
-                        accessibilityLabel={translate('accessibilityHints.prestyledText')}
+                        accessibilityLabel={props.translate('accessibilityHints.prestyledText')}
                     >
                         <View>
                             {/* eslint-disable-next-line react/jsx-props-no-spreading */}
@@ -55,5 +60,7 @@ function PreRenderer({TDefaultRenderer, onPressIn, onPressOut, onLongPress, ...d
 }
 
 PreRenderer.displayName = 'PreRenderer';
+PreRenderer.propTypes = propTypes;
+PreRenderer.defaultProps = defaultProps;
 
-export default PreRenderer;
+export default withLocalize(PreRenderer);
